@@ -2,10 +2,8 @@ package managers;
 
 import model.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class InMemoryTaskManager implements TaskManager {
     protected static int allTaskCount = 0;
@@ -250,6 +248,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpicStatus(int id) {
         HashMap<Integer, Subtask> subtaskHashMap = epicMap.get(id).getSubtaskHashMap();
         Epic epic = epicMap.get(id);
+        epic.setStartTime(findMinDateTime(epic.getId()));
         if (subtaskHashMap.isEmpty()) {
             epicMap.get(id).setProgress(Progress.NEW);
         }
@@ -275,6 +274,21 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
+    }
+
+    protected LocalDateTime findMinDateTime(int id){
+        Map<Integer, Subtask> subtasks = epicMap.get(id).getSubtaskHashMap();
+        LocalDateTime minDateTime = LocalDateTime.MAX;
+        for (Integer key : subtasks.keySet()) {
+            LocalDateTime dateTimeSubtask = subtasks.get(key).getStartTime();
+             if (dateTimeSubtask != null && dateTimeSubtask.isBefore(minDateTime)){
+                 minDateTime = dateTimeSubtask;
+             }
+        }
+        if (minDateTime.equals(LocalDateTime.MAX)){
+            return null;
+        }
+        return minDateTime;
     }
 
     @Override

@@ -5,17 +5,16 @@ import managers.HistoryManager;
 import managers.Managers;
 import model.*;
 
-import java.io.*;
+import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     static Managers managers = new Managers();
     static TaskManager taskManager = managers.getDefault();
 
-    public static void main(String[] args) throws FileBackedTaskManager.ManagerSaveException, IOException {
+    public static void main(String[] args) throws FileBackedTaskManager.ManagerSaveException {
         Scanner scanner = new Scanner(System.in);
         File file = new File("Backup.csv");
         taskManager = FileBackedTaskManager.loadFromFile(file);
@@ -224,7 +223,11 @@ public class Main {
                     if (task != null) {
                         localDateTime = printDateTime(scanner);
                         task.setStartTime(localDateTime);
-                        taskManager.updateTask(task);
+                        if (taskManager.checkIdInTask(id)) {
+                            taskManager.updateTask(task);
+                        } else {
+                            taskManager.updateSubtask((Subtask) task);
+                        }
                         taskManager.addToTreeSet(task);
                     }
                     break;
@@ -235,7 +238,11 @@ public class Main {
                     if (task != null) {
                         newDuration = printDuration(scanner);
                         task.setDuration(newDuration);
-                        taskManager.updateTask(task);
+                        if (taskManager.checkIdInTask(id)) {
+                            taskManager.updateTask(task);
+                        } else {
+                            taskManager.updateSubtask((Subtask) task);
+                        }
                     }
                     break;
                 case 18:
@@ -283,19 +290,22 @@ public class Main {
     public static Task getTask(int id, Action action) {
         Task task = null;
         if (taskManager.checkIdInTask(id)) {
-            List<Task> taskList = taskManager.getTasks();
-            for (Task taskFromList : taskList) {
+            task = taskManager.getTasks().stream().filter(task1 -> task1.getId() == id).findFirst().orElse(null);
+            /*for (Task taskFromList : taskList) {
                 if (taskFromList.getId() == id) {
                     task = taskFromList;
+                    break;
                 }
-            }
+            }*/
         } else if (taskManager.checkIdSubtask(id)) {
-            List<Task> subTaskList = taskManager.getSubtasks();
+            task = taskManager.getSubtasks().stream().filter(task1 -> task1.getId() == id).findFirst().orElse(null);
+            /*List<Task> subTaskList = taskManager.getSubtasks();
             for (Task subtaskFromList : subTaskList) {
                 if (subtaskFromList.getId() == id) {
                     task = subtaskFromList;
+                    break;
                 }
-            }
+            }*/
         }
         if (taskManager.checkIdInEpic(id)) {
             System.out.println("Невозможно изменить данные у данной задачи!");
