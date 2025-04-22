@@ -1,7 +1,7 @@
 import fileBackedTaskManager.FileBackedTaskManager;
 import model.Progress;
 import model.Task;
-import model.TaskManager;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManagerTest {
     @Test
@@ -66,6 +67,7 @@ public class FileBackedTaskManagerTest {
         File file = File.createTempFile("Backup","csv");
         TaskManager taskManager = new FileBackedTaskManager(file);
         Task task = new Task("1", "1", Progress.NEW);
+        task.setStartTime(LocalDateTime.now());
         task.setId(1);
         taskManager.addTask(task);
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);

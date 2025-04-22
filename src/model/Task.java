@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task implements Comparable<Task>{
+public class Task implements Comparable<Task> {
     protected int id;
     protected final String name;
     protected final String description;
@@ -34,11 +34,7 @@ public class Task implements Comparable<Task>{
     }
 
     public void setDuration(Duration duration) {
-        if (startTime != null) {
-            this.duration = duration;
-        } else {
-            System.out.println("Отсутствует время начала задачи!");
-        }
+        this.duration = duration;
     }
 
     public void setId(int id) {
@@ -55,7 +51,8 @@ public class Task implements Comparable<Task>{
             outputText.append("|\t Время начала: ").append(startTime.format(FileBackedTaskManager.dateTimeFormatter));
         }
         if (duration != null)
-            outputText.append("|\t Время окончания: ").append(getEndTime().format(FileBackedTaskManager.dateTimeFormatter));
+            outputText.append("|\t Время окончания: ").append(getEndTime().format(FileBackedTaskManager.dateTimeFormatter))
+                    .append("|\t Длительность задачи: ").append(duration.toHoursPart()).append(":").append(duration.toMinutesPart());
         System.out.println(outputText);
     }
 
@@ -93,9 +90,9 @@ public class Task implements Comparable<Task>{
 
     @Override
     public int compareTo(Task o) {
-        if (this.startTime.isAfter(o.startTime)){
+        if (this.startTime.isAfter(o.startTime)) {
             return 1;
-        } else if (this.startTime.isBefore(o.startTime)){
+        } else if (this.startTime.isBefore(o.startTime)) {
             return -1;
         }
         return 0;

@@ -3,11 +3,13 @@ package TaskManager;
 import fileBackedTaskManager.FileBackedTaskManager;
 import managers.HistoryManager;
 import managers.Managers;
+import managers.TaskManager;
 import model.*;
 
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
@@ -251,9 +253,6 @@ public class Main {
                     }
                     break;
                 case 19:
-                    System.out.println("Пересекаются ли задачи: " + taskManager.intersectionTasks());
-                    break;
-                case 20:
                     return;
                 default:
                     System.out.println("Такого действия нет!");
@@ -282,8 +281,7 @@ public class Main {
         System.out.println("16. Назначить время начала задачи");
         System.out.println("17. Указать длительность задачи");
         System.out.println("18. Вывести список приоритетных задач");
-        System.out.println("19. Проверить на пересечение задачи");
-        System.out.println("20. Выход");
+        System.out.println("19. Выход");
         System.out.println("--------------------");
     }
 
@@ -395,19 +393,43 @@ public class Main {
 
     private static void additionTask(TaskManager taskManager) throws FileBackedTaskManager.ManagerSaveException {
         Task task = new Task("5sdfkjb45", "5kjsdfgjfb", Progress.NEW);
+        LocalDateTime localDateTime = LocalDateTime.parse("22.04.2025 10:10", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        Duration duration = Duration.ofMinutes(20);
+        task.setStartTime(localDateTime);
+        task.setDuration(duration);
         taskManager.addTask(task);
         task = new Task("6afjhbsdf", "ksdfu4", Progress.IN_PROGRESS);
+        localDateTime = LocalDateTime.parse("22.04.2025 10:30", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        duration = Duration.ofMinutes(10);
+        task.setStartTime(localDateTime);
+        task.setDuration(duration);
         taskManager.addTask(task);
         task = new Task("7sdkjbfbi4", "7sdfjbldsf", Progress.DONE);
+        ///localDateTime = LocalDateTime.parse("22.04.2025 11:30", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        ///duration = Duration.ofMinutes(30);
+        ///task.setStartTime(localDateTime);
+        ///task.setDuration(duration);
         taskManager.addTask(task);
     }
 
     private static void additionSubtask(TaskManager taskManager) throws FileBackedTaskManager.ManagerSaveException {
         Subtask subtask = new Subtask("8sdlknfb", "8aslkfb", 2, Progress.NEW);
+        LocalDateTime localDateTime = LocalDateTime.parse("22.04.2025 10:50", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        Duration duration = Duration.ofMinutes(10);
+        subtask.setStartTime(localDateTime);
+        subtask.setDuration(duration);
         taskManager.addSubtask(subtask);
         subtask = new Subtask("9sdlknfb", "9aslkfb", 3, Progress.NEW);
+        localDateTime = LocalDateTime.parse("22.04.2025 11:50", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        duration = Duration.ofMinutes(20);
+        subtask.setStartTime(localDateTime);
+        subtask.setDuration(duration);
         taskManager.addSubtask(subtask);
         subtask = new Subtask("10sdlknfb", "10aslkfb", 3, Progress.IN_PROGRESS);
+        localDateTime = LocalDateTime.parse("22.04.2025 11:10", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        duration = Duration.ofMinutes(30);
+        subtask.setStartTime(localDateTime);
+        subtask.setDuration(duration);
         taskManager.addSubtask(subtask);
         subtask = new Subtask("11sdlknfb", "11aslkfb", 3, Progress.DONE);
         taskManager.addSubtask(subtask);

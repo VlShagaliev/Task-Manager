@@ -22,7 +22,8 @@ public class Subtask extends Task {
             outputText.append("|\t Время начала: ").append(startTime.format(FileBackedTaskManager.dateTimeFormatter));
         }
         if (duration != null)
-            outputText.append("|\t Время окончания: ").append(getEndTime().format(FileBackedTaskManager.dateTimeFormatter));
+            outputText.append("|\t Время окончания: ").append(getEndTime().format(FileBackedTaskManager.dateTimeFormatter))
+                    .append("|\t Длительность задачи: ").append(duration.toHoursPart()).append(":").append(duration.toMinutesPart());
         System.out.println(outputText);
     }
 }

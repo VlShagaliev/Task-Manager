@@ -1,9 +1,10 @@
-package model;
+package managers;
 
-import managers.HistoryManager;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
 import java.util.List;
-import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -70,7 +71,6 @@ public interface TaskManager {
 
     void addToTreeSet(Task task);
 
-    TreeSet<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 
-    boolean intersectionTasks();
 }

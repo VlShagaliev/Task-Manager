@@ -1,6 +1,7 @@
 import fileBackedTaskManager.FileBackedTaskManager;
 import managers.InMemoryTaskManager;
 import managers.Managers;
+import managers.TaskManager;
 import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -154,13 +155,11 @@ class InMemoryTaskManagerTest {
     void testHistoryReplaceTaskChecked() throws FileBackedTaskManager.ManagerSaveException {
         TaskManager taskManager = new InMemoryTaskManager();
         Task task = new Task("1", "1", Progress.NEW);
-        task.setDuration(Duration.ofMinutes(90));
         task.setId(1);
         taskManager.addTask(task);
         taskManager.printById(1);
         task = new Task("2", "2", Progress.NEW);
         task.setId(2);
-        task.setDuration(Duration.ofMinutes(30));
         taskManager.addTask(task);
         taskManager.printById(2);
         List<Task> previousHistory = new ArrayList<>(taskManager.getHistory());
@@ -172,6 +171,7 @@ class InMemoryTaskManagerTest {
     @Test
     void testTaskHaveDateTime(){
         Task task = new Task("1", "1", Progress.NEW);
+        task.setStartTime(LocalDateTime.now());
         task.setDuration(Duration.ofMinutes(90));
         task.setId(1);
         Assertions.assertTrue(task.getStartTime() != null);
@@ -181,12 +181,10 @@ class InMemoryTaskManagerTest {
     void testHistoryRemovedTaskById() throws FileBackedTaskManager.ManagerSaveException {
         TaskManager taskManager = new InMemoryTaskManager();
         Task task = new Task("1", "1", Progress.NEW);
-        task.setDuration(Duration.ofMinutes(90));
         task.setId(1);
         taskManager.addTask(task);
         taskManager.printById(1);
         task = new Task("2", "2", Progress.NEW);
-        task.setDuration(Duration.ofMinutes(30));
         task.setId(2);
         taskManager.addTask(task);
         taskManager.printById(2);
@@ -295,11 +293,25 @@ class InMemoryTaskManagerTest {
         task.setStartTime(localDateTime);
         task.setDuration(Duration.ofMinutes(20));
         taskManager.addTask(task);
-        taskManager.addToTreeSet(task);
         task = new Task("2","2", Progress.IN_PROGRESS);
         task.setStartTime(localDateTime.plusMinutes(10));
         task.setDuration(Duration.ofMinutes(10));
-        taskManager.addToTreeSet(task);
-        Assertions.assertTrue(taskManager.intersectionTasks());
+        Task finalTask = task;
+        Assertions.assertThrows(InMemoryTaskManager.TaskValidException.class,()-> taskManager.addTask(finalTask));
+    }
+
+    @Test
+    void testNotIntersectionDateTimeWithDuration(){
+        TaskManager taskManager = new InMemoryTaskManager();
+        Task task = new Task("1","1",Progress.IN_PROGRESS);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        task.setStartTime(localDateTime);
+        task.setDuration(Duration.ofMinutes(20));
+        taskManager.addTask(task);
+        task = new Task("2","2", Progress.IN_PROGRESS);
+        task.setStartTime(localDateTime.plusMinutes(30));
+        task.setDuration(Duration.ofMinutes(10));
+        Task finalTask = task;
+        Assertions.assertDoesNotThrow(()-> taskManager.addTask(finalTask));
     }
 }
