@@ -1,7 +1,7 @@
 import fileBackedTaskManager.FileBackedTaskManager;
 import model.Progress;
 import model.Task;
-import model.TaskManager;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,10 +9,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManagerTest {
     @Test
-    void createFileTest() throws IOException, FileBackedTaskManager.ManagerSaveException {
+    void testCreateFile() throws IOException, FileBackedTaskManager.ManagerSaveException {
         File file = File.createTempFile("Backup","csv");
         TaskManager taskManager = new FileBackedTaskManager(file);
         Task task = new Task("1", "1", Progress.NEW);
@@ -25,7 +26,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void fileIsNotEmptyTest() throws IOException, FileBackedTaskManager.ManagerSaveException {
+    void testFileIsNotEmpty() throws IOException, FileBackedTaskManager.ManagerSaveException {
         File file = File.createTempFile("Backup","csv");
         TaskManager taskManager = new FileBackedTaskManager(file);
         Task task = new Task("1", "1", Progress.NEW);
@@ -38,13 +39,13 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void fileIsEmptyTest() throws IOException {
+    void testFileIsEmpty() throws IOException {
         File file = File.createTempFile("Backup","csv");
         Assertions.assertTrue(file.length() == 0);
     }
 
     @Test
-    void loadFromFileTest() throws IOException, FileBackedTaskManager.ManagerSaveException {
+    void testLoadFromFile() throws IOException, FileBackedTaskManager.ManagerSaveException {
         File file = File.createTempFile("Backup","csv");
         TaskManager taskManager = new FileBackedTaskManager(file);
         Task task = new Task("1", "1", Progress.NEW);
@@ -58,7 +59,25 @@ public class FileBackedTaskManagerTest {
         } catch (IOException e) {
             System.out.println("Ошибка чтения файла");
         }
-
         Assertions.assertEquals(taskFromFile,task);
+    }
+
+    @Test
+    void testCheckDateTimeFromFile() throws IOException {
+        File file = File.createTempFile("Backup","csv");
+        TaskManager taskManager = new FileBackedTaskManager(file);
+        Task task = new Task("1", "1", Progress.NEW);
+        task.setStartTime(LocalDateTime.now());
+        task.setId(1);
+        taskManager.addTask(task);
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        Task taskFromFile = null;
+        try (FileReader fileReader = new FileReader(file); BufferedReader reader = new BufferedReader(fileReader)){
+            reader.readLine();
+            taskFromFile = fileBackedTaskManager.fromString(reader.readLine());
+        } catch (IOException e) {
+            System.out.println("Ошибка чтения файла");
+        }
+        Assertions.assertTrue(taskFromFile.getStartTime() != null);
     }
 }
