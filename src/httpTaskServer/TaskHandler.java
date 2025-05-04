@@ -47,12 +47,7 @@ class TaskHandler extends BaseHttpHandler implements HandleGetPostDelete {
         try {
             if (task.getId() == 0) {
                 taskManager.addTask(task);
-                if (taskManager.checkIdInTask(task.getId())) {
                     response = String.format("Задача успешно добавлена! Id задачи: %d", task.getId());
-                } else {
-                    sendHasInteractions(exchange);
-                    return;
-                }
             } else {
                 taskManager.updateTask(task);
                 response = "Задача успешно обновлена!";

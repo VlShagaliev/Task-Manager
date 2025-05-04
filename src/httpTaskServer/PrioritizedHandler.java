@@ -19,7 +19,7 @@ class PrioritizedHandler extends BaseHttpHandler {
                 handleGet(exchange);
                 break;
             default:
-                sendNotFound(exchange);
+                sendText(exchange, "Method Not Allowed", 405);
                 break;
         }
     }

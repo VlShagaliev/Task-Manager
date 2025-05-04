@@ -47,34 +47,29 @@ class EpicHandler extends BaseHttpHandler implements HandleGetPostDelete {
             }
         }
 
-    sendText(exchange, jsonResponse, statusCode);
-}
+        sendText(exchange, jsonResponse, statusCode);
+    }
 
-@Override
-public void handlePost(HttpExchange exchange) throws IOException {
-    String requestBody = readRequestBody(exchange);
-    Epic task = gson.fromJson(requestBody, Epic.class);
-    int statusCode = 201;
-    String response;
-    if (task.getId() == 0) {
-        taskManager.addEpic(task);
-        if (taskManager.checkIdInEpic(task.getId())) {
+    @Override
+    public void handlePost(HttpExchange exchange) throws IOException {
+        String requestBody = readRequestBody(exchange);
+        Epic task = gson.fromJson(requestBody, Epic.class);
+        int statusCode = 201;
+        String response;
+        if (task.getId() == 0) {
+            taskManager.addEpic(task);
             response = String.format("Задача успешно добавлена! Id Эпика: %d", task.getId());
         } else {
-            sendHasInteractions(exchange);
-            return;
+            taskManager.updateEpic(task);
+            response = "Задача успешно обновлена!";
         }
-    } else {
-        taskManager.updateEpic(task);
-        response = "Задача успешно обновлена!";
+        sendText(exchange, response, statusCode);
     }
-    sendText(exchange, response, statusCode);
-}
 
-@Override
-public void handleDelete(HttpExchange exchange) throws IOException {
-    String[] path = getPath(exchange);
-    taskManager.deleteEpicById(Integer.parseInt(path[2]));
-    sendText(exchange, "Задача удалена!", 200);
-}
+    @Override
+    public void handleDelete(HttpExchange exchange) throws IOException {
+        String[] path = getPath(exchange);
+        taskManager.deleteEpicById(Integer.parseInt(path[2]));
+        sendText(exchange, "Задача удалена!", 200);
+    }
 }

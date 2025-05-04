@@ -47,17 +47,12 @@ class SubtaskHandler extends BaseHttpHandler implements HandleGetPostDelete {
         try {
             if (task.getId() == 0) {
                 taskManager.addSubtask(task);
-                if (taskManager.checkIdSubtask(task.getId())) {
-                    response = String.format("Задача успешно добавлена! Id подзадачи: %d", task.getId());
-                } else {
-                    sendHasInteractions(exchange);
-                    return;
-                }
+                response = String.format("Задача успешно добавлена! Id подзадачи: %d", task.getId());
             } else {
                 taskManager.updateSubtask(task);
                 response = "Задача успешно обновлена!";
             }
-        } catch (InMemoryTaskManager.TaskValidException exception){
+        } catch (InMemoryTaskManager.TaskValidException exception) {
             response = exception.getMessage();
             statusCode = 406;
         }

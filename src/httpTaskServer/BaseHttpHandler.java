@@ -42,10 +42,6 @@ public abstract class BaseHttpHandler implements HttpHandler, HandleGetPostDelet
         sendText(exchange, "Задача не найдена!", 404);
     }
 
-    protected void sendHasInteractions(HttpExchange exchange) throws IOException {
-        sendText(exchange, "Задача пересекается с существующей!", 406);
-    }
-
     protected String[] getPath(HttpExchange exchange){
         return exchange.getRequestURI().getPath().split("/");
     }
