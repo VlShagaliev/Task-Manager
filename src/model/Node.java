@@ -1,4 +1,4 @@
-package managers;
+package model;
 
 public class Node <T> {
 

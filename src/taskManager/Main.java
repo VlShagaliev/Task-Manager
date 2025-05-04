@@ -1,5 +1,6 @@
-package TaskManager;
+package taskManager;
 
+import com.google.gson.Gson;
 import fileBackedTaskManager.FileBackedTaskManager;
 import managers.HistoryManager;
 import managers.Managers;
@@ -13,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
-    static Managers managers = new Managers();
+    static final Managers managers = new Managers();
     static TaskManager taskManager = managers.getDefault();
 
     public static void main(String[] args) throws FileBackedTaskManager.ManagerSaveException {

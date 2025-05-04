@@ -303,14 +303,11 @@ class InMemoryTaskManagerTest {
     @Test
     void testNotIntersectionDateTimeWithDuration(){
         TaskManager taskManager = new InMemoryTaskManager();
-        Task task = new Task("1","1",Progress.IN_PROGRESS);
         LocalDateTime localDateTime = LocalDateTime.now();
-        task.setStartTime(localDateTime);
-        task.setDuration(Duration.ofMinutes(20));
+        Task task = new Task("1","1",Progress.IN_PROGRESS, Duration.ofMinutes(20), localDateTime);
         taskManager.addTask(task);
-        task = new Task("2","2", Progress.IN_PROGRESS);
         task.setStartTime(localDateTime.plusMinutes(30));
-        task.setDuration(Duration.ofMinutes(10));
+        task = new Task("2","2", Progress.IN_PROGRESS,Duration.ofMinutes(10), localDateTime );
         Task finalTask = task;
         Assertions.assertDoesNotThrow(()-> taskManager.addTask(finalTask));
     }
