@@ -142,13 +142,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8); BufferedWriter writer = new BufferedWriter(fileWriter)) {
-            writer.write("id,type,name,status,description,epic,startTime,duration");
-            writer.newLine();
+            writer.write("id,type,name,status,description,epic,startTime,duration\n");
             for (int id = 1; id <= allTaskCount; id++) {
                 if (checkIdInTask(id)) {
-                    writer.write(toString(taskMap.get(id)));
+                    Task task = taskMap.get(id);
+                    writer.write(toString(task));
                 } else if (checkIdInEpic(id)) {
-                    writer.write(toString(epicMap.get(id)));
+                    Epic epic = epicMap.get(id);
+                    writer.write(toString(epic));
                 } else {
                     for (Task task : getSubtasks()) {
                         if (task.getId() == id) {
@@ -157,7 +158,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         }
                     }
                 }
-                writer.newLine();
             }
         } catch (IOException e) {
             throw new ManagerSaveException();
@@ -198,7 +198,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 case SUBTASK -> stringBuilder.append(",,,");
             }
         }
-        return stringBuilder.toString();
+        return stringBuilder+"\n";
     }
 
     public Task fromString(String value) {
@@ -279,6 +279,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     subtaskHashMap.put(task.getId(), (Subtask) task);
                 } else {
                     fileBackedTaskManager.taskMap.put(task.getId(), task);
+                }
+                if (task.getId() > 0 && allTaskCount < task.getId()){
+                    allTaskCount=task.getId();
                 }
             }
         } catch (IOException e) {

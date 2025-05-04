@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import managers.*;
 
 public class DoublyLinkedList<T> {
     public Node<T> head;

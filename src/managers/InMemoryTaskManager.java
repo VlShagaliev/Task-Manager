@@ -1,6 +1,9 @@
 package managers;
 
-import model.*;
+import model.Epic;
+import model.Progress;
+import model.Subtask;
+import model.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -225,6 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             allTaskCount++;
             newEpic.setId(allTaskCount);
+            newEpic.setProgress(Progress.NEW);
             epicMap.put(newEpic.getId(), newEpic);
             return newEpic.getId();
         }
@@ -235,7 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicMap.containsKey(newSubtask.getIdEpic())) {
             allTaskCount++;
             Epic currentEpic = epicMap.get(newSubtask.getIdEpic());
-            if (currentEpic.getDuration() == null && newSubtask.getDuration() != null){
+            if (currentEpic.getDuration() == null && newSubtask.getDuration() != null) {
                 currentEpic.setDuration(newSubtask.getDuration());
             }
             if (newSubtask.getDuration() != null && currentEpic.getDuration() != null) {
@@ -320,6 +324,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         taskMap.replace(task.getId(), task);
+        addToTreeSet(task);
     }
 
     @Override
@@ -336,6 +341,7 @@ public class InMemoryTaskManager implements TaskManager {
         HashMap<Integer, Subtask> subtaskHashMap = epicMap.get(subtask.getIdEpic()).getSubtaskHashMap();
         subtaskHashMap.replace(subtask.getId(), subtask);
         updateEpicStatus(subtask.getIdEpic());
+        addToTreeSet(subtask);
     }
 
     @Override
@@ -405,14 +411,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void deleteTasks() {
+        taskMap.clear();
+    }
+
+    @Override
+    public void deleteSubtasks() {
+
+    }
+
+    @Override
+    public void deleteEpics() {
+        epicMap.clear();
+    }
+
+    @Override
     public void addToTreeSet(Task task) {
         taskTreeSet.stream()
                 .filter(task2 -> tasksIsIntersection(task, task2))
                 .findFirst()
                 .ifPresentOrElse(task1 -> {
-                    String message = String.format("Новая задача пересекается с id = %d.",task1.getId());
-                    throw new TaskValidException(message);
-                },() -> taskTreeSet.add(task));
+                            String message = String.format("Новая задача пересекается с id = %d.", task1.getId());
+                            throw new TaskValidException(message);
+                        }, () -> taskTreeSet.add(task)
+                );
     }
 
     private boolean tasksIsIntersection(Task task1, Task task2) {
@@ -421,7 +443,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public static class TaskValidException extends RuntimeException {
-        public TaskValidException(String message){
+        public TaskValidException(String message) {
             super(message);
         }
     }
